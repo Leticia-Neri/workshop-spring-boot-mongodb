@@ -3,7 +3,6 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/workshop-spring-boot-mongodb.iml" filepath="$PROJECT_DIR$/.idea/workshop-spring-boot-mongodb.iml" />
-      <module fileurl="file://$PROJECT_DIR$/workshopmongo/workshopmongo/workshopmongo.iml" filepath="$PROJECT_DIR$/workshopmongo/workshopmongo/workshopmongo.iml" />
     </modules>
   </component>
 </project>
