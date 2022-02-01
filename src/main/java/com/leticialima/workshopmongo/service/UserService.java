@@ -1,6 +1,7 @@
 package com.leticialima.workshopmongo.service;
 
 import com.leticialima.workshopmongo.domain.User;
+import com.leticialima.workshopmongo.dto.UserDTO;
 import com.leticialima.workshopmongo.repository.UserRepository;
 import com.leticialima.workshopmongo.service.exception.ObjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,5 +24,12 @@ public class UserService {
 
         Optional<User> obj = repo.findById(id);
         return obj.orElseThrow(() -> new ObjectNotFoundException("Objeto não encontrado"));
+    }
+    public User insert(User obj){
+        return repo.insert(obj);
+    }
+
+    public User fromDTO(UserDTO objDTO){
+        return new User(objDTO.getId(), objDTO.getName(), objDTO.getEmail());
     }
 }
