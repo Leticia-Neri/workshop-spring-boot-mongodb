@@ -1,6 +1,7 @@
 package com.leticialima.workshopmongo.resources;
 
 
+import com.leticialima.workshopmongo.domain.Post;
 import com.leticialima.workshopmongo.domain.User;
 import com.leticialima.workshopmongo.dto.UserDTO;
 import com.leticialima.workshopmongo.service.UserService;
@@ -63,5 +64,11 @@ public class UserResource {
         obj = service.update(obj);
         return ResponseEntity.ok().body(new UserDTO(obj));
         //return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/{id}/posts")
+    public ResponseEntity<List<Post>> findPosts(@PathVariable String id){
+        User obj = service.findById(id);
+        return ResponseEntity.ok().body(obj.getPosts());
     }
 }
