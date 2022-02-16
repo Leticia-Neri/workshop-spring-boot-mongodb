@@ -1,6 +1,7 @@
 package com.leticialima.workshopmongo.domain;
 
 import org.springframework.data.annotation.Id;
+
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document
@@ -10,11 +11,21 @@ public class UsuarioModel {
     private String id;
     private String login;
     private String password;
+    //private Role role;
+    private Role role;
 
-    public UsuarioModel(String id, String login, String password) {
+
+
+
+
+
+
+    public UsuarioModel(String id, String login, String password, Role role) {
         this.id = id;
         this.login = login;
         this.password = password;
+        this.role = role;
+
     }
 
     public UsuarioModel(){
@@ -43,5 +54,13 @@ public class UsuarioModel {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
     }
 }

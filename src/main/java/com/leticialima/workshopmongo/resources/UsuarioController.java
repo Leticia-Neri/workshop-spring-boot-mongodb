@@ -1,9 +1,14 @@
 package com.leticialima.workshopmongo.resources;
 
+
+import com.leticialima.workshopmongo.domain.Role;
 import com.leticialima.workshopmongo.domain.UsuarioModel;
 import com.leticialima.workshopmongo.repository.UsuarioRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,6 +22,7 @@ public class UsuarioController {
 //    @Autowired
 //    UsuarioRepository repository;
 
+
     private final UsuarioRepository repository;
     private final PasswordEncoder encoder;
 
@@ -29,13 +35,20 @@ public class UsuarioController {
 
 
 
+
     @GetMapping("/listarTodos")
+    //@Secured({"admin"})
+    //@PreAuthorize("hasRole('admin')")
     public ResponseEntity<List<UsuarioModel>> listarTodos(){
         return ResponseEntity.ok(repository.findAll());
     }
 
     @PostMapping("/salvar")
     public ResponseEntity<UsuarioModel> salvar(@RequestBody UsuarioModel usuarioModel){
+
+        usuarioModel.setRole(Role.user);
+
+
 
 
         Optional<UsuarioModel> usuarioLogin = repository.findByLogin(usuarioModel.getLogin());
