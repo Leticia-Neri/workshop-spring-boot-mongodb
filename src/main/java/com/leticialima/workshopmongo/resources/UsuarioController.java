@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,12 +34,9 @@ public class UsuarioController {
     }
 
 
-
-
-
     @GetMapping("/listarTodos")
-    //@Secured({"admin"})
-    //@PreAuthorize("hasRole('admin')")
+    @Secured({"ROLE_ADMIN"})
+    //@PreAuthorize("hasRole('ADMIN') or hasRole('ROLE_ADMIN')")
     public ResponseEntity<List<UsuarioModel>> listarTodos(){
         return ResponseEntity.ok(repository.findAll());
     }
@@ -46,17 +44,11 @@ public class UsuarioController {
     @PostMapping("/salvar")
     public ResponseEntity<UsuarioModel> salvar(@RequestBody UsuarioModel usuarioModel){
 
-        usuarioModel.setRole(Role.user);
-
-
-
-
         Optional<UsuarioModel> usuarioLogin = repository.findByLogin(usuarioModel.getLogin());
 //        if(usuarioLogin.isPresent()){
 //            throw new RuntimeException("usuario já tem login");
-//
 //        }
-
+        usuarioModel.setRole(Role.ADMIN);
         usuarioModel.setPassword(encoder.encode(usuarioModel.getPassword()));
         return ResponseEntity.ok(repository.save(usuarioModel));
     }
@@ -78,5 +70,9 @@ public class UsuarioController {
 
         HttpStatus status = (valid) ? HttpStatus.OK : HttpStatus.UNAUTHORIZED;
         return ResponseEntity.status(status).body(valid);
+    }
+    @GetMapping(path = "/username")
+    public String currentUser(Authentication principal){
+        return principal.getName() + " " + principal.getAuthorities();
     }
 }

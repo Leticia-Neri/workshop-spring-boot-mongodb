@@ -1,9 +1,9 @@
 package com.leticialima.workshopmongo.security;
 
 
-
 import com.leticialima.workshopmongo.domain.Role;
 import com.leticialima.workshopmongo.service.DetalheUsuarioServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -14,6 +14,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -23,6 +24,9 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @Configuration
 @EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true, jsr250Enabled = true)
 public class JWTConfiguracao extends WebSecurityConfigurerAdapter {
+
+    @Autowired
+    private UserDetailsService userDetailsService;
 
     private final DetalheUsuarioServiceImpl usuarioService;
     private final PasswordEncoder passwordEncoder;
@@ -43,22 +47,21 @@ public class JWTConfiguracao extends WebSecurityConfigurerAdapter {
         http.csrf().disable().authorizeRequests()
                 .antMatchers(HttpMethod.POST, "/login").permitAll()
                 //.antMatchers(HttpMethod.GET, "/api/usuario/listarTodos").permitAll()
-                //.antMatchers("api/usuario/listarTodos").hasAuthority(String.valueOf(Role.ADMIN))
-                .antMatchers("api/usuario/listarTodos").hasRole(String.valueOf(Role.admin))
+                .antMatchers("api/usuario/listarTodos").hasAnyAuthority("ROLE_ADMIN", "ADMIN","1")
+                .antMatchers("api/usuario/listarTodos").hasAuthority("ROLE_ADMIN")
+                .antMatchers("api/usuario/listarTodos").access("hasAnyRole('ROLE_ADMIN','ADMIN','1')")
+                .antMatchers("/api/usuario/salvar").permitAll()
 
-              .antMatchers("/api/usuario/salvar").permitAll()
 
-
-
-                .anyRequest().authenticated()
+                .anyRequest().fullyAuthenticated()
                 .and()
                 .addFilter(new JWTAuteticarFilter(authenticationManager()))
-                .addFilter(new JWTValidarFilter(authenticationManager()))
+                .addFilter(new JWTValidarFilter(authenticationManager(), userDetailsService))
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
     }
 
     @Bean
-    CorsConfigurationSource corsConfigurationSource(){
+    CorsConfigurationSource corsConfigurationSource() {
         final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 
         CorsConfiguration corsConfiguration = new CorsConfiguration().applyPermitDefaultValues();

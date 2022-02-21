@@ -1,8 +1,13 @@
 package com.leticialima.workshopmongo.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.data.annotation.Id;
 
 import org.springframework.data.mongodb.core.mapping.Document;
+
+import java.util.HashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Document
 public class UsuarioModel {
@@ -12,7 +17,8 @@ public class UsuarioModel {
     private String login;
     private String password;
     //private Role role;
-    private Role role;
+    @JsonIgnore
+    private Set<Integer> role = new HashSet<>();
 
 
 
@@ -24,7 +30,7 @@ public class UsuarioModel {
         this.id = id;
         this.login = login;
         this.password = password;
-        this.role = role;
+        setRole(Role.ADMIN);
 
     }
 
@@ -56,11 +62,11 @@ public class UsuarioModel {
         this.password = password;
     }
 
-    public Role getRole() {
-        return role;
+    public Set<Role> getRole() {
+        return role.stream().map(Role::toEnum).collect(Collectors.toSet());
     }
 
-    public void setRole(Role role) {
-        this.role = role;
+    public void setRole(Role roles) {
+        role.add(roles.getCode());
     }
 }
